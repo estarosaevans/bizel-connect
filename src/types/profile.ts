@@ -20,3 +20,20 @@ export interface ProfileFormData extends Omit<Profile, 'experiences' | 'educatio
   experiences: Experience[];
   education: Education[];
 }
+
+// Helper functions to convert between form data and database types
+export const serializeFormData = (formData: ProfileFormData): Profile => {
+  return {
+    ...formData,
+    experiences: formData.experiences as unknown as Json[],
+    education: formData.education as unknown as Json[],
+  };
+};
+
+export const deserializeProfileData = (profile: Profile): ProfileFormData => {
+  return {
+    ...profile,
+    experiences: (profile.experiences || []) as unknown as Experience[],
+    education: (profile.education || []) as unknown as Education[],
+  };
+};

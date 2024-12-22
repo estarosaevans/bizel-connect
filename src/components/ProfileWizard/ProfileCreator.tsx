@@ -9,7 +9,7 @@ import { SocialLinks } from "./steps/SocialLinks";
 import { ProfessionalDetails } from "./steps/ProfessionalDetails";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import type { ProfileFormData } from "@/types/profile";
+import type { ProfileFormData, serializeFormData } from "@/types/profile";
 
 const TOTAL_STEPS = 4;
 
@@ -90,14 +90,17 @@ export const ProfileCreator = () => {
           
         profilePictureUrl = publicUrl;
       }
+
+      // Convert form data to database format
+      const profileData = serializeFormData({
+        ...formData,
+        user_id: user.id,
+        profile_picture_url: profilePictureUrl || null,
+      });
       
       const { error } = await supabase
         .from('profiles')
-        .insert({
-          ...formData,
-          user_id: user.id,
-          profile_picture_url: profilePictureUrl || null,
-        });
+        .insert(profileData);
 
       if (error) throw error;
 
