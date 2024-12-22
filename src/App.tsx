@@ -4,13 +4,13 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
-// Placeholder components until they're implemented
-const Login = () => <div>Login Page (Coming Soon)</div>;
-const Signup = () => <div>Signup Page (Coming Soon)</div>;
-const Dashboard = () => <div>Dashboard (Coming Soon)</div>;
+// Placeholder component until it's implemented
 const ProfileCreator = () => <div>Profile Creator (Coming Soon)</div>;
 
 const App = () => (
@@ -22,9 +22,22 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/profile-creator" element={<ProfileCreator />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile-creator"
+            element={
+              <ProtectedRoute>
+                <ProfileCreator />
+              </ProtectedRoute>
+            }
+          />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
