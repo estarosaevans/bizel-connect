@@ -1,19 +1,17 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import type { Database } from "@/integrations/supabase/types";
-
-type Profile = Database['public']['Tables']['profiles']['Insert'];
+import type { ProfileFormData } from "@/types/profile";
 
 interface PersonalDetailsProps {
-  data: Profile;
-  updateData: (data: Partial<Profile>) => void;
+  data: ProfileFormData;
+  updateData: (data: Partial<ProfileFormData>) => void;
 }
 
 export const PersonalDetails = ({ data, updateData }: PersonalDetailsProps) => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      updateData({ profile_picture_url: e.target.files[0] });
+      updateData({ profile_picture_url: e.target.files[0] as unknown as string });
     }
   };
 

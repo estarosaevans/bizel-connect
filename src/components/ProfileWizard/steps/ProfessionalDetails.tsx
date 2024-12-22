@@ -4,13 +4,11 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Plus, X } from "lucide-react";
-import type { Database } from "@/integrations/supabase/types";
-
-type Profile = Database['public']['Tables']['profiles']['Insert'];
+import type { ProfileFormData, Experience, Education } from "@/types/profile";
 
 interface ProfessionalDetailsProps {
-  data: Profile;
-  updateData: (data: Partial<Profile>) => void;
+  data: ProfileFormData;
+  updateData: (data: Partial<ProfileFormData>) => void;
 }
 
 export const ProfessionalDetails = ({ data, updateData }: ProfessionalDetailsProps) => {
@@ -48,7 +46,7 @@ export const ProfessionalDetails = ({ data, updateData }: ProfessionalDetailsPro
   };
 
   const addExperience = () => {
-    const newExperience = {
+    const newExperience: Experience = {
       title: "",
       company: "",
       startDate: "",
@@ -56,21 +54,20 @@ export const ProfessionalDetails = ({ data, updateData }: ProfessionalDetailsPro
       description: "",
     };
 
-    if (Array.isArray(data.experiences)) {
-      updateData({
-        experiences: [...data.experiences, newExperience],
-      });
-    }
+    const experiences = Array.isArray(data.experiences) ? data.experiences : [];
+    updateData({
+      experiences: [...experiences, newExperience] as Experience[],
+    });
   };
 
-  const updateExperience = (index: number, field: string, value: string) => {
-    if (Array.isArray(data.experiences)) {
-      const newExperiences = [...data.experiences];
-      newExperiences[index] = {
-        ...newExperiences[index],
+  const updateExperience = (index: number, field: keyof Experience, value: string) => {
+    const experiences = Array.isArray(data.experiences) ? [...data.experiences] : [];
+    if (experiences[index]) {
+      experiences[index] = {
+        ...experiences[index],
         [field]: value,
-      };
-      updateData({ experiences: newExperiences });
+      } as Experience;
+      updateData({ experiences });
     }
   };
 
@@ -83,27 +80,26 @@ export const ProfessionalDetails = ({ data, updateData }: ProfessionalDetailsPro
   };
 
   const addEducation = () => {
-    const newEducation = {
+    const newEducation: Education = {
       degree: "",
       institution: "",
       year: "",
     };
 
-    if (Array.isArray(data.education)) {
-      updateData({
-        education: [...data.education, newEducation],
-      });
-    }
+    const education = Array.isArray(data.education) ? data.education : [];
+    updateData({
+      education: [...education, newEducation] as Education[],
+    });
   };
 
-  const updateEducation = (index: number, field: string, value: string) => {
-    if (Array.isArray(data.education)) {
-      const newEducation = [...data.education];
-      newEducation[index] = {
-        ...newEducation[index],
+  const updateEducation = (index: number, field: keyof Education, value: string) => {
+    const education = Array.isArray(data.education) ? [...data.education] : [];
+    if (education[index]) {
+      education[index] = {
+        ...education[index],
         [field]: value,
-      };
-      updateData({ education: newEducation });
+      } as Education;
+      updateData({ education });
     }
   };
 

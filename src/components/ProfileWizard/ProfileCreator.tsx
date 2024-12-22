@@ -9,9 +9,7 @@ import { SocialLinks } from "./steps/SocialLinks";
 import { ProfessionalDetails } from "./steps/ProfessionalDetails";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import type { Database } from "@/integrations/supabase/types";
-
-type Profile = Database['public']['Tables']['profiles']['Insert'];
+import type { ProfileFormData } from "@/types/profile";
 
 const TOTAL_STEPS = 4;
 
@@ -19,7 +17,7 @@ export const ProfileCreator = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<Profile>({
+  const [formData, setFormData] = useState<ProfileFormData>({
     // Personal Details
     full_name: "",
     position: "",
@@ -76,12 +74,13 @@ export const ProfileCreator = () => {
       
       // Upload profile picture if exists
       if (formData.profile_picture_url) {
-        const fileExt = formData.profile_picture_url.split('.').pop();
+        const file = formData.profile_picture_url as unknown as File;
+        const fileExt = file.name.split('.').pop();
         const fileName = `${crypto.randomUUID()}.${fileExt}`;
         
         const { error: uploadError } = await supabase.storage
           .from('profile-pictures')
-          .upload(fileName, formData.profile_picture_url);
+          .upload(fileName, file);
           
         if (uploadError) throw uploadError;
         
@@ -118,7 +117,7 @@ export const ProfileCreator = () => {
     }
   };
 
-  const updateFormData = (data: Partial<Profile>) => {
+  const updateFormData = (data: Partial<ProfileFormData>) => {
     setFormData(prev => ({ ...prev, ...data }));
   };
 
