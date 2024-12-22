@@ -1,4 +1,5 @@
 import type { Database } from "@/integrations/supabase/types";
+import type { Json } from "@/integrations/supabase/types";
 
 export type Profile = Database['public']['Tables']['profiles']['Insert'];
 

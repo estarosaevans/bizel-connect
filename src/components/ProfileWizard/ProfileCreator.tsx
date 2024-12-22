@@ -9,7 +9,7 @@ import { SocialLinks } from "./steps/SocialLinks";
 import { ProfessionalDetails } from "./steps/ProfessionalDetails";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import type { ProfileFormData, serializeFormData } from "@/types/profile";
+import { ProfileFormData, serializeFormData } from "@/types/profile";
 
 const TOTAL_STEPS = 4;
 
