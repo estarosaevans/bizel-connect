@@ -9,7 +9,84 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          bio: string | null
+          created_at: string
+          education: Json[] | null
+          email: string | null
+          experiences: Json[] | null
+          facebook: string | null
+          full_name: string | null
+          id: string
+          interests: string[] | null
+          linkedin: string | null
+          organization: string | null
+          phone: string | null
+          position: string | null
+          profile_picture_url: string | null
+          skills: string[] | null
+          telegram: string | null
+          tiktok: string | null
+          twitter: string | null
+          updated_at: string
+          user_id: string
+          website: string | null
+          whatsapp: string | null
+          youtube: string | null
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          education?: Json[] | null
+          email?: string | null
+          experiences?: Json[] | null
+          facebook?: string | null
+          full_name?: string | null
+          id?: string
+          interests?: string[] | null
+          linkedin?: string | null
+          organization?: string | null
+          phone?: string | null
+          position?: string | null
+          profile_picture_url?: string | null
+          skills?: string[] | null
+          telegram?: string | null
+          tiktok?: string | null
+          twitter?: string | null
+          updated_at?: string
+          user_id: string
+          website?: string | null
+          whatsapp?: string | null
+          youtube?: string | null
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          education?: Json[] | null
+          email?: string | null
+          experiences?: Json[] | null
+          facebook?: string | null
+          full_name?: string | null
+          id?: string
+          interests?: string[] | null
+          linkedin?: string | null
+          organization?: string | null
+          phone?: string | null
+          position?: string | null
+          profile_picture_url?: string | null
+          skills?: string[] | null
+          telegram?: string | null
+          tiktok?: string | null
+          twitter?: string | null
+          updated_at?: string
+          user_id?: string
+          website?: string | null
+          whatsapp?: string | null
+          youtube?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

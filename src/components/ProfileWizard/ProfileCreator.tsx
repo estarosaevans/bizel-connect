@@ -9,6 +9,9 @@ import { SocialLinks } from "./steps/SocialLinks";
 import { ProfessionalDetails } from "./steps/ProfessionalDetails";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
+
+type Profile = Database['public']['Tables']['profiles']['Insert'];
 
 const TOTAL_STEPS = 4;
 
@@ -16,13 +19,13 @@ export const ProfileCreator = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Profile>({
     // Personal Details
-    fullName: "",
+    full_name: "",
     position: "",
     organization: "",
     bio: "",
-    profilePicture: null as File | null,
+    profile_picture_url: null,
     
     // Contact Information
     phone: "",
@@ -39,20 +42,13 @@ export const ProfileCreator = () => {
     website: "",
     
     // Professional Details
-    skills: [] as string[],
-    interests: [] as string[],
-    experiences: [] as Array<{
-      title: string;
-      company: string;
-      startDate: string;
-      endDate: string;
-      description: string;
-    }>,
-    education: [] as Array<{
-      degree: string;
-      institution: string;
-      year: string;
-    }>,
+    skills: [],
+    interests: [],
+    experiences: [],
+    education: [],
+    
+    // Required field
+    user_id: "",
   });
 
   const handleNext = () => {
@@ -73,16 +69,19 @@ export const ProfileCreator = () => {
 
   const handleSubmit = async () => {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("No user found");
+
       let profilePictureUrl = "";
       
       // Upload profile picture if exists
-      if (formData.profilePicture) {
-        const fileExt = formData.profilePicture.name.split('.').pop();
+      if (formData.profile_picture_url) {
+        const fileExt = formData.profile_picture_url.split('.').pop();
         const fileName = `${crypto.randomUUID()}.${fileExt}`;
         
         const { error: uploadError } = await supabase.storage
           .from('profile-pictures')
-          .upload(fileName, formData.profilePicture);
+          .upload(fileName, formData.profile_picture_url);
           
         if (uploadError) throw uploadError;
         
@@ -93,28 +92,13 @@ export const ProfileCreator = () => {
         profilePictureUrl = publicUrl;
       }
       
-      const { error } = await supabase.from('profiles').insert({
-        user_id: (await supabase.auth.getUser()).data.user?.id,
-        full_name: formData.fullName,
-        position: formData.position,
-        organization: formData.organization,
-        bio: formData.bio,
-        profile_picture_url: profilePictureUrl,
-        phone: formData.phone,
-        email: formData.email,
-        whatsapp: formData.whatsapp,
-        telegram: formData.telegram,
-        linkedin: formData.linkedin,
-        tiktok: formData.tiktok,
-        twitter: formData.twitter,
-        facebook: formData.facebook,
-        youtube: formData.youtube,
-        website: formData.website,
-        skills: formData.skills,
-        interests: formData.interests,
-        experiences: formData.experiences,
-        education: formData.education,
-      });
+      const { error } = await supabase
+        .from('profiles')
+        .insert({
+          ...formData,
+          user_id: user.id,
+          profile_picture_url: profilePictureUrl || null,
+        });
 
       if (error) throw error;
 
@@ -134,7 +118,7 @@ export const ProfileCreator = () => {
     }
   };
 
-  const updateFormData = (data: Partial<typeof formData>) => {
+  const updateFormData = (data: Partial<Profile>) => {
     setFormData(prev => ({ ...prev, ...data }));
   };
 
