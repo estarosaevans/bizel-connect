@@ -17,24 +17,46 @@ export interface Education {
   year: string;
 }
 
+// Make sure ProfileFormData extends Profile but overrides specific fields
 export interface ProfileFormData extends Omit<Profile, 'experiences' | 'education'> {
   experiences: Experience[];
   education: Education[];
 }
 
-// Helper functions to convert between form data and database types
+// Helper function to convert Experience[] to Json[]
+const serializeExperiences = (experiences: Experience[]): Json[] => {
+  return experiences.map(exp => ({
+    title: exp.title,
+    company: exp.company,
+    startDate: exp.startDate,
+    endDate: exp.endDate,
+    description: exp.description
+  }));
+};
+
+// Helper function to convert Education[] to Json[]
+const serializeEducation = (education: Education[]): Json[] => {
+  return education.map(edu => ({
+    degree: edu.degree,
+    institution: edu.institution,
+    year: edu.year
+  }));
+};
+
+// Helper function to convert form data to database format
 export const serializeFormData = (formData: ProfileFormData): Profile => {
   return {
     ...formData,
-    experiences: formData.experiences as unknown as Json[],
-    education: formData.education as unknown as Json[],
+    experiences: serializeExperiences(formData.experiences) as Json[],
+    education: serializeEducation(formData.education) as Json[],
   };
 };
 
+// Helper function to convert database format to form data
 export const deserializeProfileData = (profile: Profile): ProfileFormData => {
   return {
     ...profile,
-    experiences: (profile.experiences || []) as unknown as Experience[],
-    education: (profile.education || []) as unknown as Education[],
+    experiences: (profile.experiences || []) as Experience[],
+    education: (profile.education || []) as Education[],
   };
 };
