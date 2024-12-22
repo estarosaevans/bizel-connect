@@ -1,14 +1,12 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import type { Database } from "@/integrations/supabase/types";
+
+type Profile = Database['public']['Tables']['profiles']['Insert'];
 
 interface ContactInformationProps {
-  data: {
-    phone: string;
-    email: string;
-    whatsapp: string;
-    telegram: string;
-  };
-  updateData: (data: Partial<ContactInformationProps["data"]>) => void;
+  data: Profile;
+  updateData: (data: Partial<Profile>) => void;
 }
 
 export const ContactInformation = ({ data, updateData }: ContactInformationProps) => {
@@ -26,7 +24,7 @@ export const ContactInformation = ({ data, updateData }: ContactInformationProps
           <Label htmlFor="phone">Phone Number</Label>
           <Input
             id="phone"
-            value={data.phone}
+            value={data.phone || ""}
             onChange={(e) => updateData({ phone: e.target.value })}
             placeholder="+1 (555) 123-4567"
           />
@@ -37,7 +35,7 @@ export const ContactInformation = ({ data, updateData }: ContactInformationProps
           <Input
             id="email"
             type="email"
-            value={data.email}
+            value={data.email || ""}
             onChange={(e) => updateData({ email: e.target.value })}
             placeholder="john@example.com"
           />
@@ -47,7 +45,7 @@ export const ContactInformation = ({ data, updateData }: ContactInformationProps
           <Label htmlFor="whatsapp">WhatsApp</Label>
           <Input
             id="whatsapp"
-            value={data.whatsapp}
+            value={data.whatsapp || ""}
             onChange={(e) => updateData({ whatsapp: e.target.value })}
             placeholder="WhatsApp number or username"
           />
@@ -57,7 +55,7 @@ export const ContactInformation = ({ data, updateData }: ContactInformationProps
           <Label htmlFor="telegram">Telegram</Label>
           <Input
             id="telegram"
-            value={data.telegram}
+            value={data.telegram || ""}
             onChange={(e) => updateData({ telegram: e.target.value })}
             placeholder="Telegram username"
           />

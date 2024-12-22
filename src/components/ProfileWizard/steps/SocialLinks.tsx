@@ -1,16 +1,12 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import type { Database } from "@/integrations/supabase/types";
+
+type Profile = Database['public']['Tables']['profiles']['Insert'];
 
 interface SocialLinksProps {
-  data: {
-    linkedin: string;
-    tiktok: string;
-    twitter: string;
-    facebook: string;
-    youtube: string;
-    website: string;
-  };
-  updateData: (data: Partial<SocialLinksProps["data"]>) => void;
+  data: Profile;
+  updateData: (data: Partial<Profile>) => void;
 }
 
 export const SocialLinks = ({ data, updateData }: SocialLinksProps) => {
@@ -28,7 +24,7 @@ export const SocialLinks = ({ data, updateData }: SocialLinksProps) => {
           <Label htmlFor="linkedin">LinkedIn</Label>
           <Input
             id="linkedin"
-            value={data.linkedin}
+            value={data.linkedin || ""}
             onChange={(e) => updateData({ linkedin: e.target.value })}
             placeholder="https://linkedin.com/in/username"
           />
@@ -38,7 +34,7 @@ export const SocialLinks = ({ data, updateData }: SocialLinksProps) => {
           <Label htmlFor="tiktok">TikTok</Label>
           <Input
             id="tiktok"
-            value={data.tiktok}
+            value={data.tiktok || ""}
             onChange={(e) => updateData({ tiktok: e.target.value })}
             placeholder="@username"
           />
@@ -48,7 +44,7 @@ export const SocialLinks = ({ data, updateData }: SocialLinksProps) => {
           <Label htmlFor="twitter">Twitter</Label>
           <Input
             id="twitter"
-            value={data.twitter}
+            value={data.twitter || ""}
             onChange={(e) => updateData({ twitter: e.target.value })}
             placeholder="@username"
           />
@@ -58,7 +54,7 @@ export const SocialLinks = ({ data, updateData }: SocialLinksProps) => {
           <Label htmlFor="facebook">Facebook</Label>
           <Input
             id="facebook"
-            value={data.facebook}
+            value={data.facebook || ""}
             onChange={(e) => updateData({ facebook: e.target.value })}
             placeholder="https://facebook.com/username"
           />
@@ -68,7 +64,7 @@ export const SocialLinks = ({ data, updateData }: SocialLinksProps) => {
           <Label htmlFor="youtube">YouTube</Label>
           <Input
             id="youtube"
-            value={data.youtube}
+            value={data.youtube || ""}
             onChange={(e) => updateData({ youtube: e.target.value })}
             placeholder="https://youtube.com/@username"
           />
@@ -78,7 +74,7 @@ export const SocialLinks = ({ data, updateData }: SocialLinksProps) => {
           <Label htmlFor="website">Personal Website</Label>
           <Input
             id="website"
-            value={data.website}
+            value={data.website || ""}
             onChange={(e) => updateData({ website: e.target.value })}
             placeholder="https://example.com"
           />

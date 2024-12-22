@@ -4,25 +4,13 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Plus, X } from "lucide-react";
+import type { Database } from "@/integrations/supabase/types";
+
+type Profile = Database['public']['Tables']['profiles']['Insert'];
 
 interface ProfessionalDetailsProps {
-  data: {
-    skills: string[];
-    interests: string[];
-    experiences: Array<{
-      title: string;
-      company: string;
-      startDate: string;
-      endDate: string;
-      description: string;
-    }>;
-    education: Array<{
-      degree: string;
-      institution: string;
-      year: string;
-    }>;
-  };
-  updateData: (data: Partial<ProfessionalDetailsProps["data"]>) => void;
+  data: Profile;
+  updateData: (data: Partial<Profile>) => void;
 }
 
 export const ProfessionalDetails = ({ data, updateData }: ProfessionalDetailsProps) => {
@@ -30,87 +18,101 @@ export const ProfessionalDetails = ({ data, updateData }: ProfessionalDetailsPro
   const [newInterest, setNewInterest] = useState("");
 
   const addSkill = () => {
-    if (newSkill.trim()) {
+    if (newSkill.trim() && Array.isArray(data.skills)) {
       updateData({ skills: [...data.skills, newSkill.trim()] });
       setNewSkill("");
     }
   };
 
   const removeSkill = (index: number) => {
-    updateData({
-      skills: data.skills.filter((_, i) => i !== index),
-    });
+    if (Array.isArray(data.skills)) {
+      updateData({
+        skills: data.skills.filter((_, i) => i !== index),
+      });
+    }
   };
 
   const addInterest = () => {
-    if (newInterest.trim()) {
+    if (newInterest.trim() && Array.isArray(data.interests)) {
       updateData({ interests: [...data.interests, newInterest.trim()] });
       setNewInterest("");
     }
   };
 
   const removeInterest = (index: number) => {
-    updateData({
-      interests: data.interests.filter((_, i) => i !== index),
-    });
+    if (Array.isArray(data.interests)) {
+      updateData({
+        interests: data.interests.filter((_, i) => i !== index),
+      });
+    }
   };
 
   const addExperience = () => {
-    updateData({
-      experiences: [
-        ...data.experiences,
-        {
-          title: "",
-          company: "",
-          startDate: "",
-          endDate: "",
-          description: "",
-        },
-      ],
-    });
+    const newExperience = {
+      title: "",
+      company: "",
+      startDate: "",
+      endDate: "",
+      description: "",
+    };
+
+    if (Array.isArray(data.experiences)) {
+      updateData({
+        experiences: [...data.experiences, newExperience],
+      });
+    }
   };
 
   const updateExperience = (index: number, field: string, value: string) => {
-    const newExperiences = [...data.experiences];
-    newExperiences[index] = {
-      ...newExperiences[index],
-      [field]: value,
-    };
-    updateData({ experiences: newExperiences });
+    if (Array.isArray(data.experiences)) {
+      const newExperiences = [...data.experiences];
+      newExperiences[index] = {
+        ...newExperiences[index],
+        [field]: value,
+      };
+      updateData({ experiences: newExperiences });
+    }
   };
 
   const removeExperience = (index: number) => {
-    updateData({
-      experiences: data.experiences.filter((_, i) => i !== index),
-    });
+    if (Array.isArray(data.experiences)) {
+      updateData({
+        experiences: data.experiences.filter((_, i) => i !== index),
+      });
+    }
   };
 
   const addEducation = () => {
-    updateData({
-      education: [
-        ...data.education,
-        {
-          degree: "",
-          institution: "",
-          year: "",
-        },
-      ],
-    });
+    const newEducation = {
+      degree: "",
+      institution: "",
+      year: "",
+    };
+
+    if (Array.isArray(data.education)) {
+      updateData({
+        education: [...data.education, newEducation],
+      });
+    }
   };
 
   const updateEducation = (index: number, field: string, value: string) => {
-    const newEducation = [...data.education];
-    newEducation[index] = {
-      ...newEducation[index],
-      [field]: value,
-    };
-    updateData({ education: newEducation });
+    if (Array.isArray(data.education)) {
+      const newEducation = [...data.education];
+      newEducation[index] = {
+        ...newEducation[index],
+        [field]: value,
+      };
+      updateData({ education: newEducation });
+    }
   };
 
   const removeEducation = (index: number) => {
-    updateData({
-      education: data.education.filter((_, i) => i !== index),
-    });
+    if (Array.isArray(data.education)) {
+      updateData({
+        education: data.education.filter((_, i) => i !== index),
+      });
+    }
   };
 
   return (
@@ -137,7 +139,7 @@ export const ProfessionalDetails = ({ data, updateData }: ProfessionalDetailsPro
           </Button>
         </div>
         <div className="flex flex-wrap gap-2">
-          {data.skills.map((skill, index) => (
+          {Array.isArray(data.skills) && data.skills.map((skill, index) => (
             <span
               key={index}
               className="bg-primary-100 text-primary-600 px-3 py-1 rounded-full flex items-center gap-2"
@@ -169,7 +171,7 @@ export const ProfessionalDetails = ({ data, updateData }: ProfessionalDetailsPro
           </Button>
         </div>
         <div className="flex flex-wrap gap-2">
-          {data.interests.map((interest, index) => (
+          {Array.isArray(data.interests) && data.interests.map((interest, index) => (
             <span
               key={index}
               className="bg-primary-100 text-primary-600 px-3 py-1 rounded-full flex items-center gap-2"
@@ -195,7 +197,7 @@ export const ProfessionalDetails = ({ data, updateData }: ProfessionalDetailsPro
           </Button>
         </div>
         <div className="space-y-4">
-          {data.experiences.map((exp, index) => (
+          {Array.isArray(data.experiences) && data.experiences.map((exp, index) => (
             <Card key={index} className="p-4 relative">
               <button
                 onClick={() => removeExperience(index)}
@@ -261,7 +263,7 @@ export const ProfessionalDetails = ({ data, updateData }: ProfessionalDetailsPro
           </Button>
         </div>
         <div className="space-y-4">
-          {data.education.map((edu, index) => (
+          {Array.isArray(data.education) && data.education.map((edu, index) => (
             <Card key={index} className="p-4 relative">
               <button
                 onClick={() => removeEducation(index)}
