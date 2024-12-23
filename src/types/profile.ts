@@ -23,6 +23,26 @@ export interface ProfileFormData extends Omit<Profile, 'experiences' | 'educatio
   education: Education[];
 }
 
+// Type guard to check if a JSON object is an Experience
+const isExperience = (json: Json): json is Experience => {
+  if (typeof json !== 'object' || json === null) return false;
+  const exp = json as Record<string, unknown>;
+  return typeof exp.title === 'string' &&
+    typeof exp.company === 'string' &&
+    typeof exp.startDate === 'string' &&
+    typeof exp.endDate === 'string' &&
+    typeof exp.description === 'string';
+};
+
+// Type guard to check if a JSON object is an Education
+const isEducation = (json: Json): json is Education => {
+  if (typeof json !== 'object' || json === null) return false;
+  const edu = json as Record<string, unknown>;
+  return typeof edu.degree === 'string' &&
+    typeof edu.institution === 'string' &&
+    typeof edu.year === 'string';
+};
+
 // Helper function to convert Experience[] to Json[]
 const serializeExperiences = (experiences: Experience[]): Json[] => {
   return experiences.map(exp => ({
@@ -43,12 +63,24 @@ const serializeEducation = (education: Education[]): Json[] => {
   }));
 };
 
+// Helper function to safely convert Json[] to Experience[]
+const deserializeExperiences = (json: Json[] | null): Experience[] => {
+  if (!json) return [];
+  return json.filter(isExperience);
+};
+
+// Helper function to safely convert Json[] to Education[]
+const deserializeEducation = (json: Json[] | null): Education[] => {
+  if (!json) return [];
+  return json.filter(isEducation);
+};
+
 // Helper function to convert form data to database format
 export const serializeFormData = (formData: ProfileFormData): Profile => {
   return {
     ...formData,
-    experiences: serializeExperiences(formData.experiences) as Json[],
-    education: serializeEducation(formData.education) as Json[],
+    experiences: serializeExperiences(formData.experiences),
+    education: serializeEducation(formData.education),
   };
 };
 
@@ -56,7 +88,7 @@ export const serializeFormData = (formData: ProfileFormData): Profile => {
 export const deserializeProfileData = (profile: Profile): ProfileFormData => {
   return {
     ...profile,
-    experiences: (profile.experiences || []) as Experience[],
-    education: (profile.education || []) as Education[],
+    experiences: deserializeExperiences(profile.experiences),
+    education: deserializeEducation(profile.education),
   };
 };
