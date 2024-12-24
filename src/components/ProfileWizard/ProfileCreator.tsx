@@ -109,6 +109,7 @@ export const ProfileCreator = () => {
         description: "Your profile has been created successfully.",
       });
 
+      // Navigate to dashboard after successful completion
       navigate("/dashboard");
     } catch (error) {
       console.error('Error creating profile:', error);

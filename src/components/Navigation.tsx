@@ -26,9 +26,11 @@ export const Navigation = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex items-center space-x-2">
-            <span className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent">
-              bizel.link
-            </span>
+            <img 
+              src="/lovable-uploads/d4bc859a-f38a-453d-a149-07f679d0a6c3.png" 
+              alt="bizel.link logo" 
+              className="h-10 w-10 object-contain"
+            />
           </Link>
           <div className="flex items-center space-x-4">
             {user ? (
