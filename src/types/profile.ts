@@ -23,10 +23,10 @@ export interface ProfileFormData extends Omit<Profile, 'experiences' | 'educatio
   education: Education[];
 }
 
-// Type guard to check if a JSON object matches Experience shape
-const isExperience = (json: unknown): json is Experience => {
-  if (typeof json !== 'object' || json === null) return false;
-  const exp = json as Record<string, unknown>;
+// Type guard to check if an unknown value matches Experience shape
+const isExperience = (value: unknown): value is Experience => {
+  if (typeof value !== 'object' || value === null) return false;
+  const exp = value as Record<string, unknown>;
   return typeof exp.title === 'string' &&
     typeof exp.company === 'string' &&
     typeof exp.startDate === 'string' &&
@@ -34,10 +34,10 @@ const isExperience = (json: unknown): json is Experience => {
     typeof exp.description === 'string';
 };
 
-// Type guard to check if a JSON object matches Education shape
-const isEducation = (json: unknown): json is Education => {
-  if (typeof json !== 'object' || json === null) return false;
-  const edu = json as Record<string, unknown>;
+// Type guard to check if an unknown value matches Education shape
+const isEducation = (value: unknown): value is Education => {
+  if (typeof value !== 'object' || value === null) return false;
+  const edu = value as Record<string, unknown>;
   return typeof edu.degree === 'string' &&
     typeof edu.institution === 'string' &&
     typeof edu.year === 'string';
@@ -51,7 +51,7 @@ const serializeExperiences = (experiences: Experience[]): Json[] => {
     startDate: exp.startDate,
     endDate: exp.endDate,
     description: exp.description
-  } as Json));
+  })) as Json[];
 };
 
 // Helper function to convert Education[] to Json[]
@@ -60,19 +60,25 @@ const serializeEducation = (education: Education[]): Json[] => {
     degree: edu.degree,
     institution: edu.institution,
     year: edu.year
-  } as Json));
+  })) as Json[];
 };
 
 // Helper function to safely convert Json[] to Experience[]
 const deserializeExperiences = (json: Json[] | null): Experience[] => {
   if (!json) return [];
-  return json.filter((item): item is Experience => isExperience(item));
+  return json.filter((item): item is Experience => {
+    if (typeof item !== 'object' || item === null) return false;
+    return isExperience(item);
+  });
 };
 
 // Helper function to safely convert Json[] to Education[]
 const deserializeEducation = (json: Json[] | null): Education[] => {
   if (!json) return [];
-  return json.filter((item): item is Education => isEducation(item));
+  return json.filter((item): item is Education => {
+    if (typeof item !== 'object' || item === null) return false;
+    return isEducation(item);
+  });
 };
 
 // Helper function to convert form data to database format
