@@ -3,21 +3,24 @@ import type { Json } from "@/integrations/supabase/types";
 
 export type Profile = Database['public']['Tables']['profiles']['Insert'];
 
+// Base types with index signatures for JSON compatibility
 export interface Experience {
   title: string;
   company: string;
   startDate: string;
   endDate: string;
   description: string;
+  [key: string]: Json;
 }
 
 export interface Education {
   degree: string;
   institution: string;
   year: string;
+  [key: string]: Json;
 }
 
-// Make sure ProfileFormData extends Profile but overrides specific fields
+// Form data type that extends Profile but with strongly typed arrays
 export interface ProfileFormData extends Omit<Profile, 'experiences' | 'education'> {
   experiences: Experience[];
   education: Education[];
@@ -51,7 +54,7 @@ const serializeExperiences = (experiences: Experience[]): Json[] => {
     startDate: exp.startDate,
     endDate: exp.endDate,
     description: exp.description
-  })) as Json[];
+  })) as unknown as Json[];
 };
 
 // Helper function to convert Education[] to Json[]
@@ -60,13 +63,13 @@ const serializeEducation = (education: Education[]): Json[] => {
     degree: edu.degree,
     institution: edu.institution,
     year: edu.year
-  })) as Json[];
+  })) as unknown as Json[];
 };
 
 // Helper function to safely convert Json[] to Experience[]
 const deserializeExperiences = (json: Json[] | null): Experience[] => {
   if (!json) return [];
-  return json.filter((item): item is Experience => {
+  return (json as unknown[]).filter((item): item is Experience => {
     if (typeof item !== 'object' || item === null) return false;
     return isExperience(item);
   });
@@ -75,7 +78,7 @@ const deserializeExperiences = (json: Json[] | null): Experience[] => {
 // Helper function to safely convert Json[] to Education[]
 const deserializeEducation = (json: Json[] | null): Education[] => {
   if (!json) return [];
-  return json.filter((item): item is Education => {
+  return (json as unknown[]).filter((item): item is Education => {
     if (typeof item !== 'object' || item === null) return false;
     return isEducation(item);
   });
