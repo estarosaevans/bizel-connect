@@ -13,7 +13,11 @@ import { ProfileFormData, serializeFormData } from "@/types/profile";
 
 const TOTAL_STEPS = 4;
 
-export const ProfileCreator = () => {
+interface ProfileCreatorProps {
+  onComplete?: () => void | Promise<void>;
+}
+
+export const ProfileCreator = ({ onComplete }: ProfileCreatorProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
@@ -108,6 +112,11 @@ export const ProfileCreator = () => {
         title: "Success!",
         description: "Your profile has been created successfully.",
       });
+
+      // Call onComplete callback if provided
+      if (onComplete) {
+        await onComplete();
+      }
 
       // Navigate to dashboard after successful completion
       navigate("/dashboard");
