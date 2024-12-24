@@ -5,13 +5,13 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { Plus, Share2, Pencil, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProfileCreator } from "@/components/ProfileWizard/ProfileCreator";
 
 interface Page {
   id: string;
   title: string;
   created_at: string;
+  profile_id: string | null;
 }
 
 const Dashboard = () => {
@@ -38,14 +38,14 @@ const Dashboard = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data, error } = await supabase
+      const { data: pagesData, error } = await supabase
         .from('pages')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setPages(data || []);
+      setPages(pagesData || []);
     } catch (error) {
       console.error('Error fetching pages:', error);
       toast({
@@ -59,7 +59,6 @@ const Dashboard = () => {
   };
 
   const handleShare = async (pageId: string) => {
-    // For now, just copy the URL to clipboard
     const url = `${window.location.origin}/page/${pageId}`;
     await navigator.clipboard.writeText(url);
     toast({
@@ -114,11 +113,13 @@ const Dashboard = () => {
     }
   };
 
+  const handleProfileCreatorComplete = async () => {
+    setIsCreating(false);
+    await fetchPages();
+  };
+
   if (isCreating) {
-    return <ProfileCreator onComplete={() => {
-      setIsCreating(false);
-      fetchPages();
-    }} />;
+    return <ProfileCreator onComplete={handleProfileCreatorComplete} />;
   }
 
   return (
